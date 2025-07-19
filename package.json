@@ -1,0 +1,39 @@
+{
+  "name": "artistwebsellerblog-server",
+  "version": "1.0.0",
+  "description": "Backend server for Artist Web Seller Blog",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "seed:admin": "node src/seeders/adminSeeder.js",
+    "seed:users": "node src/seeders/createUsers.js",
+    "seed:artworks": "node src/seeders/importArtworks.js",
+    "seed:siteinfo": "node src/seeders/siteInfoSeeder.js",
+    "seed:all": "npm run seed:users && npm run seed:artworks && npm run seed:siteinfo",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.41.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mercadopago": "^2.8.0",
+    "mongoose": "^8.0.3",
+    "morgan": "^1.10.0",
+    "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^4.0.0",
+    "nodemailer": "^7.0.5",
+    "stripe": "^18.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
