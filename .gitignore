@@ -11,3 +11,5 @@ yarn-error.log*
 *.log
 dist/
 build/
+logs/
+.pm2/

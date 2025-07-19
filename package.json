@@ -11,7 +11,14 @@
     "seed:artworks": "node src/seeders/importArtworks.js",
     "seed:siteinfo": "node src/seeders/siteInfoSeeder.js",
     "seed:all": "npm run seed:users && npm run seed:artworks && npm run seed:siteinfo",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:start:prod": "pm2 start ecosystem.production.config.js",
+    "pm2:stop": "pm2 stop artistwebseller-api",
+    "pm2:restart": "pm2 restart artistwebseller-api",
+    "pm2:logs": "pm2 logs artistwebseller-api",
+    "pm2:monit": "pm2 monit",
+    "deploy": "bash scripts/deploy.sh"
   },
   "keywords": [],
   "author": "",
