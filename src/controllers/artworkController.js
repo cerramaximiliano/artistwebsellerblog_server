@@ -131,12 +131,18 @@ const createArtwork = async (req, res) => {
     
     // Generate SEO slug if not provided
     if (!artworkData.seo?.slug) {
+      const baseSlug = generateSlug(artworkData.title);
+      const uniqueSlug = await generateUniqueSlug(baseSlug);
+      
       artworkData.seo = {
         ...artworkData.seo,
-        slug: generateSlug(artworkData.title),
+        slug: uniqueSlug,
         metaTitle: artworkData.title,
         metaDescription: artworkData.description
       };
+    } else {
+      // If slug is provided, ensure it's unique
+      artworkData.seo.slug = await generateUniqueSlug(artworkData.seo.slug);
     }
     
     const artwork = new Artwork(artworkData);
@@ -173,6 +179,38 @@ function generateSlug(title) {
     .substring(0, 50);
 }
 
+// Helper function to ensure unique slug
+async function generateUniqueSlug(baseSlug, artworkId = null) {
+  let slug = baseSlug;
+  let counter = 1;
+  
+  while (true) {
+    // Check if slug exists (excluding current artwork if updating)
+    const query = { 'seo.slug': slug };
+    if (artworkId) {
+      query._id = { $ne: artworkId };
+    }
+    
+    const existing = await Artwork.findOne(query);
+    if (!existing) {
+      return slug;
+    }
+    
+    // Generate new slug with counter
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+    
+    // Prevent infinite loop
+    if (counter > 100) {
+      // Use timestamp as last resort
+      slug = `${baseSlug}-${Date.now()}`;
+      break;
+    }
+  }
+  
+  return slug;
+}
+
 // Update artwork (admin only)
 const updateArtwork = async (req, res) => {
   try {
@@ -207,6 +245,12 @@ const updateArtwork = async (req, res) => {
         },
         gallery: artwork.images?.gallery || []
       };
+    }
+    
+    // Check if SEO slug is being updated
+    if (updateData.seo?.slug) {
+      // Ensure the new slug is unique (excluding current artwork)
+      updateData.seo.slug = await generateUniqueSlug(updateData.seo.slug, req.params.id);
     }
     
     // Update the artwork
