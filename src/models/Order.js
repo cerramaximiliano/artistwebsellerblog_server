@@ -67,16 +67,28 @@ const orderSchema = new mongoose.Schema({
       type: Number,
       default: 0
     },
-    address: {
-      street: String,
-      city: String,
-      province: String,
-      zipCode: String,
-      country: String,
-      notes: String
+    address: String,
+    city: String,
+    province: String,
+    postalCode: String,
+    country: {
+      type: String,
+      default: 'Argentina'
     },
+    notes: String,
     trackingNumber: String,
     carrier: String
+  },
+  
+  // Billing information
+  billing: {
+    type: {
+      type: String,
+      enum: ['consumer', 'business'],
+      default: 'consumer'
+    },
+    businessName: String,
+    cuit: String
   },
   total: {
     type: Number,
@@ -118,6 +130,8 @@ const orderSchema = new mongoose.Schema({
     transactionId: String,
     paymentIntentId: String, // Stripe payment intent
     preferenceId: String, // MercadoPago preference
+    paymentId: String, // MercadoPago payment ID
+    paymentDetails: Object, // Store full payment details
     paidAt: Date,
     amount: Number,
     currency: {
@@ -163,6 +177,20 @@ orderSchema.pre('save', async function(next) {
 orderSchema.index({ orderNumber: 1 });
 orderSchema.index({ 'customer.email': 1 });
 orderSchema.index({ status: 1, createdAt: -1 });
+
+// Static method to generate order number
+orderSchema.statics.generateOrderNumber = async function() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const count = await this.countDocuments({
+    createdAt: {
+      $gte: new Date(year, date.getMonth(), 1),
+      $lt: new Date(year, date.getMonth() + 1, 1)
+    }
+  });
+  return `ORD-${year}${month}-${String(count + 1).padStart(4, '0')}`;
+};
 
 const Order = mongoose.model('Order', orderSchema);
 
