@@ -31,8 +31,6 @@ app.use('/api/artworks', require('./routes/artworks'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/payments', require('./routes/payments'));
-app.use('/api/checkout', require('./routes/checkoutRoutes'));
-app.use('/api/webhook', require('./routes/webhookRoutes'));
 app.use('/api/stats', require('./routes/stats'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/newsletter', require('./routes/newsletter'));

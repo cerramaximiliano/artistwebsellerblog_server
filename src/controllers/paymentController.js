@@ -3,21 +3,12 @@ const { sendSuccess, sendError } = require('../utils/responseHandler');
 
 // Initialize payment providers lazily
 let stripe;
-let mercadopago;
 
 const getStripe = () => {
   if (!stripe && process.env.STRIPE_SECRET_KEY) {
     stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
   }
   return stripe;
-};
-
-const getMercadoPago = () => {
-  if (!mercadopago && process.env.MERCADOPAGO_ACCESS_TOKEN) {
-    mercadopago = require('mercadopago');
-    mercadopago.configurations.setAccessToken(process.env.MERCADOPAGO_ACCESS_TOKEN);
-  }
-  return mercadopago;
 };
 
 // Create payment intent
@@ -50,49 +41,6 @@ const createPaymentIntent = async (req, res) => {
       sendSuccess(res, {
         clientSecret: paymentIntent.client_secret,
         paymentIntentId: paymentIntent.id
-      });
-    } else if (paymentMethod === 'mercadopago') {
-      const mercadopagoInstance = getMercadoPago();
-      if (!mercadopagoInstance) {
-        return sendError(res, { message: 'MercadoPago no está configurado' }, 500);
-      }
-      
-      // Create MercadoPago preference
-      const preferenceData = {
-        items: order.items.map(item => ({
-          id: item.artwork.toString(),
-          title: item.title,
-          quantity: 1,
-          unit_price: item.finalPrice,
-          currency_id: 'ARS'
-        })),
-        payer: {
-          name: order.customer.name,
-          email: order.customer.email,
-          phone: {
-            number: order.customer.phone
-          }
-        },
-        back_urls: {
-          success: `${process.env.FRONTEND_URL}/payment/success`,
-          failure: `${process.env.FRONTEND_URL}/payment/failure`,
-          pending: `${process.env.FRONTEND_URL}/payment/pending`
-        },
-        auto_return: 'approved',
-        external_reference: order._id.toString(),
-        notification_url: `${process.env.BACKEND_URL || process.env.SERVER_URL}/api/webhook/mercadopago`
-      };
-
-      const response = await mercadopagoInstance.preferences.create(preferenceData);
-      
-      // Update order with preference ID
-      order.payment.preferenceId = response.body.id;
-      await order.save();
-
-      sendSuccess(res, {
-        preferenceId: response.body.id,
-        initPoint: response.body.init_point,
-        sandboxInitPoint: response.body.sandbox_init_point
       });
     } else {
       sendError(res, { message: 'Método de pago no válido' }, 400);
@@ -177,15 +125,6 @@ const handleWebhook = async (req, res) => {
             await order.save();
           }
           break;
-      }
-    } else {
-      // MercadoPago webhook
-      const { type, data } = req.body;
-      
-      if (type === 'payment' && data?.id) {
-        // Handle MercadoPago payment notification
-        // You would need to verify the payment with MercadoPago API
-        // This is a simplified version
       }
     }
 
