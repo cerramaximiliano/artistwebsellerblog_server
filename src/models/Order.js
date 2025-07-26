@@ -119,7 +119,7 @@ const orderSchema = new mongoose.Schema({
   payment: {
     method: {
       type: String,
-      enum: ['stripe', 'transfer', 'cash'],
+      enum: ['stripe', 'mercadopago', 'transfer', 'cash'],
       required: true
     },
     status: {
