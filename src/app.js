@@ -28,6 +28,7 @@ connectDB();
 app.use('/api', require('./routes/index'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/artworks', require('./routes/artworks'));
+app.use('/api/digital-art', require('./routes/digitalArt'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/payments', require('./routes/payments'));
