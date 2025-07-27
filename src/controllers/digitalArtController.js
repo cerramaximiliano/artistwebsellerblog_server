@@ -93,40 +93,7 @@ const getDigitalArtwork = async (req, res) => {
 // Create digital artwork (admin only)
 const createDigitalArtwork = async (req, res) => {
   try {
-    const digitalArtData = { ...req.body };
-    
-    // Si originalArtworkId es un string que no es un ObjectId válido,
-    // intentar buscar la obra por título
-    if (digitalArtData.originalArtworkId && 
-        typeof digitalArtData.originalArtworkId === 'string' && 
-        !digitalArtData.originalArtworkId.match(/^[0-9a-fA-F]{24}$/)) {
-      
-      const Artwork = require('../models/Artwork');
-      const originalArtwork = await Artwork.findOne({ 
-        title: digitalArtData.originalArtworkId 
-      });
-      
-      if (originalArtwork) {
-        digitalArtData.originalArtworkId = originalArtwork._id;
-        // Si no se proporciona originalTitle, usar el título de la obra encontrada
-        if (!digitalArtData.originalTitle) {
-          digitalArtData.originalTitle = originalArtwork.title;
-        }
-      } else {
-        return sendError(res, { 
-          message: `No se encontró una obra original con el título: "${digitalArtData.originalArtworkId}"` 
-        }, 400);
-      }
-    }
-    
-    // Validar que originalTitle esté presente
-    if (!digitalArtData.originalTitle) {
-      return sendError(res, { 
-        message: 'El campo originalTitle es requerido' 
-      }, 400);
-    }
-    
-    const digitalArt = new DigitalArt(digitalArtData);
+    const digitalArt = new DigitalArt(req.body);
     await digitalArt.save();
     
     sendSuccess(res, digitalArt, 'Obra digital creada exitosamente', 201);
@@ -139,34 +106,9 @@ const createDigitalArtwork = async (req, res) => {
 // Update digital artwork (admin only)
 const updateDigitalArtwork = async (req, res) => {
   try {
-    const updateData = { ...req.body };
-    
-    // Si se está actualizando originalArtworkId y es un título en lugar de ID
-    if (updateData.originalArtworkId && 
-        typeof updateData.originalArtworkId === 'string' && 
-        !updateData.originalArtworkId.match(/^[0-9a-fA-F]{24}$/)) {
-      
-      const Artwork = require('../models/Artwork');
-      const originalArtwork = await Artwork.findOne({ 
-        title: updateData.originalArtworkId 
-      });
-      
-      if (originalArtwork) {
-        updateData.originalArtworkId = originalArtwork._id;
-        // Actualizar también el originalTitle si se encontró la obra
-        if (!updateData.originalTitle) {
-          updateData.originalTitle = originalArtwork.title;
-        }
-      } else {
-        return sendError(res, { 
-          message: `No se encontró una obra original con el título: "${updateData.originalArtworkId}"` 
-        }, 400);
-      }
-    }
-    
     const digitalArt = await DigitalArt.findByIdAndUpdate(
       req.params.id,
-      updateData,
+      req.body,
       { new: true, runValidators: true }
     );
     
