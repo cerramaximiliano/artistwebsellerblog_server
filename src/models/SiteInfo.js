@@ -39,6 +39,16 @@ const siteInfoSchema = new mongoose.Schema({
       achievement: {
         type: String,
         required: true
+      },
+      images: [{
+        url: String,
+        publicId: String,
+        alt: String,
+        caption: String
+      }],
+      externalUrl: {
+        type: String,
+        required: false
       }
     }],
     exhibitions: [{
@@ -57,6 +67,20 @@ const siteInfoSchema = new mongoose.Schema({
       description: {
         type: String,
         required: false
+      },
+      images: [{
+        url: String,
+        publicId: String,
+        alt: String,
+        caption: String
+      }],
+      externalUrl: {
+        type: String,
+        required: false
+      },
+      catalogUrl: {
+        type: String,
+        required: false
       }
     }],
     awards: [{
@@ -69,6 +93,20 @@ const siteInfoSchema = new mongoose.Schema({
         required: true
       },
       organization: {
+        type: String,
+        required: false
+      },
+      images: [{
+        url: String,
+        publicId: String,
+        alt: String,
+        caption: String
+      }],
+      externalUrl: {
+        type: String,
+        required: false
+      },
+      certificateUrl: {
         type: String,
         required: false
       }
@@ -139,6 +177,38 @@ const siteInfoSchema = new mongoose.Schema({
     mapLocation: {
       lat: Number,
       lng: Number
+    }
+  },
+
+  // PÁGINAS LEGALES
+  legalPages: {
+    privacyPolicy: {
+      title: {
+        type: String,
+        default: 'Política de Privacidad'
+      },
+      content: {
+        type: String,
+        default: ''
+      },
+      lastUpdated: {
+        type: Date,
+        default: Date.now
+      }
+    },
+    termsAndConditions: {
+      title: {
+        type: String,
+        default: 'Términos y Condiciones'
+      },
+      content: {
+        type: String,
+        default: ''
+      },
+      lastUpdated: {
+        type: Date,
+        default: Date.now
+      }
     }
   },
 

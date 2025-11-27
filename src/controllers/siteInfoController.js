@@ -80,9 +80,106 @@ const getContactInfo = async (req, res) => {
   }
 };
 
+// Get privacy policy
+const getPrivacyPolicy = async (req, res) => {
+  try {
+    const siteInfo = await SiteInfo.getSiteInfo();
+    const privacyPolicy = siteInfo.legalPages?.privacyPolicy || {
+      title: 'Política de Privacidad',
+      content: '',
+      lastUpdated: new Date()
+    };
+    sendSuccess(res, privacyPolicy);
+  } catch (error) {
+    sendError(res, error, 500);
+  }
+};
+
+// Get terms and conditions
+const getTermsAndConditions = async (req, res) => {
+  try {
+    const siteInfo = await SiteInfo.getSiteInfo();
+    const terms = siteInfo.legalPages?.termsAndConditions || {
+      title: 'Términos y Condiciones',
+      content: '',
+      lastUpdated: new Date()
+    };
+    sendSuccess(res, terms);
+  } catch (error) {
+    sendError(res, error, 500);
+  }
+};
+
+// Get all legal pages
+const getLegalPages = async (req, res) => {
+  try {
+    const siteInfo = await SiteInfo.getSiteInfo();
+    sendSuccess(res, siteInfo.legalPages || {});
+  } catch (error) {
+    sendError(res, error, 500);
+  }
+};
+
+// Update privacy policy (admin only)
+const updatePrivacyPolicy = async (req, res) => {
+  try {
+    const { title, content } = req.body;
+    const siteInfo = await SiteInfo.getSiteInfo();
+
+    if (!siteInfo.legalPages) {
+      siteInfo.legalPages = {};
+    }
+
+    siteInfo.legalPages.privacyPolicy = {
+      title: title || 'Política de Privacidad',
+      content: content || '',
+      lastUpdated: new Date()
+    };
+
+    siteInfo.metadata.lastUpdated = new Date();
+    siteInfo.metadata.updatedBy = req.user?.email || 'System';
+
+    await siteInfo.save();
+    sendSuccess(res, siteInfo.legalPages.privacyPolicy, 'Política de privacidad actualizada exitosamente');
+  } catch (error) {
+    sendError(res, error, 500);
+  }
+};
+
+// Update terms and conditions (admin only)
+const updateTermsAndConditions = async (req, res) => {
+  try {
+    const { title, content } = req.body;
+    const siteInfo = await SiteInfo.getSiteInfo();
+
+    if (!siteInfo.legalPages) {
+      siteInfo.legalPages = {};
+    }
+
+    siteInfo.legalPages.termsAndConditions = {
+      title: title || 'Términos y Condiciones',
+      content: content || '',
+      lastUpdated: new Date()
+    };
+
+    siteInfo.metadata.lastUpdated = new Date();
+    siteInfo.metadata.updatedBy = req.user?.email || 'System';
+
+    await siteInfo.save();
+    sendSuccess(res, siteInfo.legalPages.termsAndConditions, 'Términos y condiciones actualizados exitosamente');
+  } catch (error) {
+    sendError(res, error, 500);
+  }
+};
+
 module.exports = {
   getSiteInfo,
   updateSiteInfo,
   getBiography,
-  getContactInfo
+  getContactInfo,
+  getPrivacyPolicy,
+  getTermsAndConditions,
+  getLegalPages,
+  updatePrivacyPolicy,
+  updateTermsAndConditions
 };

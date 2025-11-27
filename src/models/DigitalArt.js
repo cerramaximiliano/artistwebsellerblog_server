@@ -59,6 +59,10 @@ const digitalArtSchema = new mongoose.Schema({
       type: String,
       default: 'ARS'
     },
+    quantity: {
+      type: Number,
+      default: 0
+    },
     available: {
       type: Boolean,
       default: true
