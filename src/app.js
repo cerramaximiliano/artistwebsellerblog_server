@@ -39,6 +39,7 @@ app.use('/api/contact', require('./routes/contact'));
 app.use('/api/newsletter', require('./routes/newsletter'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/siteinfo', require('./routes/siteinfo'));
+app.use('/api/admin', require('./routes/admin'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
