@@ -1,4 +1,4 @@
-const { AdminContact } = require('../../models/admin');
+const { AdminContact, Finance } = require('../../models/admin');
 const { sendSuccess, sendError, sendPaginatedResponse } = require('../../utils/responseHandler');
 
 // Obtener todos los contactos con filtros
@@ -54,11 +54,45 @@ const getContacts = async (req, res) => {
       AdminContact.find(query)
         .sort(sortOption)
         .limit(parseInt(limit))
-        .skip(parseInt(offset)),
+        .skip(parseInt(offset))
+        .lean(),
       AdminContact.countDocuments(query)
     ]);
 
-    sendPaginatedResponse(res, contacts, {
+    // Obtener totales de transacciones para cada contacto
+    const contactIds = contacts.map(c => c._id);
+    const transactionTotals = await Finance.aggregate([
+      { $match: { relatedContact: { $in: contactIds } } },
+      {
+        $group: {
+          _id: { contactId: '$relatedContact', type: '$type' },
+          total: { $sum: '$amount' },
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    // Mapear totales a cada contacto
+    const contactsWithTotals = contacts.map(contact => {
+      const incomeTotals = transactionTotals.find(
+        t => t._id.contactId.toString() === contact._id.toString() && t._id.type === 'income'
+      );
+      const expenseTotals = transactionTotals.find(
+        t => t._id.contactId.toString() === contact._id.toString() && t._id.type === 'expense'
+      );
+
+      return {
+        ...contact,
+        transactionTotals: {
+          income: incomeTotals?.total || 0,
+          incomeCount: incomeTotals?.count || 0,
+          expense: expenseTotals?.total || 0,
+          expenseCount: expenseTotals?.count || 0
+        }
+      };
+    });
+
+    sendPaginatedResponse(res, contactsWithTotals, {
       total,
       limit: parseInt(limit),
       offset: parseInt(offset),

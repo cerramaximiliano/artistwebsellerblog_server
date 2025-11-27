@@ -14,6 +14,7 @@ router.get('/yearly-comparison', financesController.getYearlyComparison);
 
 // Transacciones
 router.get('/transactions', financesController.getTransactions);
+router.get('/transactions/contact/:contactId', financesController.getTransactionsByContact);
 router.get('/transactions/:id', financesController.getTransaction);
 router.post('/transactions', financesController.createTransaction);
 router.put('/transactions/:id', financesController.updateTransaction);

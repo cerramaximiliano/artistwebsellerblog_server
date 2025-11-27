@@ -338,6 +338,62 @@ const syncBudget = async (req, res) => {
   }
 };
 
+// Obtener transacciones por contacto (para historial de proveedores/clientes)
+const getTransactionsByContact = async (req, res) => {
+  try {
+    const { contactId } = req.params;
+    const { type, limit = 50, offset = 0 } = req.query;
+    const mongoose = require('mongoose');
+
+    const contactObjectId = new mongoose.Types.ObjectId(contactId);
+    const query = { relatedContact: contactObjectId };
+    if (type) query.type = type;
+
+    const [transactions, total] = await Promise.all([
+      Finance.find(query)
+        .sort({ date: -1 })
+        .limit(parseInt(limit))
+        .skip(parseInt(offset))
+        .populate('relatedArtwork', 'title'),
+      Finance.countDocuments(query)
+    ]);
+
+    // Calcular totales
+    const totals = await Finance.aggregate([
+      { $match: query },
+      {
+        $group: {
+          _id: '$type',
+          total: { $sum: '$amount' },
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const totalIncome = totals.find(t => t._id === 'income')?.total || 0;
+    const totalExpense = totals.find(t => t._id === 'expense')?.total || 0;
+    const incomeCount = totals.find(t => t._id === 'income')?.count || 0;
+    const expenseCount = totals.find(t => t._id === 'expense')?.count || 0;
+
+    sendSuccess(res, {
+      transactions,
+      totals: {
+        income: totalIncome,
+        expense: totalExpense,
+        incomeCount,
+        expenseCount
+      },
+      pagination: {
+        total,
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      }
+    });
+  } catch (error) {
+    sendError(res, error, 500);
+  }
+};
+
 module.exports = {
   // Transacciones
   getTransactions,
@@ -345,6 +401,7 @@ module.exports = {
   createTransaction,
   updateTransaction,
   deleteTransaction,
+  getTransactionsByContact,
   // Resumen y reportes
   getSummary,
   getCategoryBreakdown,

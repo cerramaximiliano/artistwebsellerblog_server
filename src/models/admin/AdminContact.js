@@ -20,7 +20,7 @@ const adminContactSchema = new mongoose.Schema({
     type: String,
     trim: true,
     lowercase: true,
-    match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Email inválido']
+    match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$/, 'Email inválido']
   },
   phone: {
     type: String,
