@@ -10,7 +10,7 @@ const artworkSchema = new mongoose.Schema({
   artist: {
     type: String,
     required: true,
-    default: 'Mirta Susana Aguilar'
+    default: 'Mirta Aguilar'
   },
   description: {
     type: String,

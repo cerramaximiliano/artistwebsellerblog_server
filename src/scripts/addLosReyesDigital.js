@@ -7,7 +7,7 @@ const losReyesDigital = {
   title: 'Los Reyes - Versión Digital',
   originalArtworkId: '687cc12a14b35ed5f26563f2',
   originalTitle: 'Los Reyes',
-  artist: 'Mirta Susana Aguilar',
+  artist: 'Mirta Aguilar',
   version: '01',
   description: 'Reinterpretación digital de la obra original "Los Reyes". Esta versión contemporánea mantiene la esencia y el poder visual del cuadro original, adaptado para un público joven que busca arte accesible y moderno para decorar sus espacios.',
   digitalTechnique: 'Reinterpretación digital con técnicas mixtas',

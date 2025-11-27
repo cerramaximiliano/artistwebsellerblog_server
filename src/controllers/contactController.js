@@ -132,7 +132,7 @@ const subscribeNewsletter = async (req, res) => {
             <p>Te mantendremos informado sobre nuevas obras, exposiciones y promociones exclusivas.</p>
             <p>Si deseas cancelar tu suscripción, puedes hacerlo en cualquier momento.</p>
             <br>
-            <p>Saludos,<br>Mirta Susana Aguilar</p>
+            <p>Saludos,<br>Mirta Aguilar</p>
           `
         };
         

@@ -29,7 +29,7 @@ GET /api/digital-art
       "originalArtworkId": {
         "_id": "artwork_id",
         "title": "Los Reyes",
-        "artist": "Mirta Susana Aguilar",
+        "artist": "Mirta Aguilar",
         "year": 2020
       },
       "version": "01",
@@ -71,7 +71,7 @@ GET /api/digital-art/:id
     "_id": "digital_art_id",
     "title": "Los Reyes - Versión Digital",
     "originalArtworkId": { /* datos completos del artwork original */ },
-    "artist": "Mirta Susana Aguilar",
+    "artist": "Mirta Aguilar",
     "version": "01",
     "description": "Reinterpretación digital...",
     "digitalTechnique": "Reinterpretación digital con técnicas mixtas",

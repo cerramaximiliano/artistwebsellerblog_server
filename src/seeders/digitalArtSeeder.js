@@ -8,7 +8,7 @@ const digitalArtSamples = [
   {
     title: "Los Reyes - Versión Digital",
     originalTitle: "Los Reyes",
-    artist: "Mirta Susana Aguilar",
+    artist: "Mirta Aguilar",
     version: "01",
     description: "Reinterpretación digital de la obra original 'Los Reyes'. Esta versión contemporánea mantiene la esencia y el poder visual del cuadro original, adaptado para un público joven que busca arte accesible y moderno para decorar sus espacios.",
     digitalTechnique: "Reinterpretación digital con técnicas mixtas",
@@ -53,7 +53,7 @@ const digitalArtSamples = [
   {
     title: "Composición Abstracta - Edición Digital",
     originalTitle: "Composición Abstracta",
-    artist: "Mirta Susana Aguilar",
+    artist: "Mirta Aguilar",
     version: "01",
     description: "Versión digital vibrante de la obra original. Los colores han sido intensificados digitalmente para crear una pieza impactante ideal para espacios modernos.",
     digitalTechnique: "Edición digital con realce de colores",
@@ -90,7 +90,7 @@ const digitalArtSamples = [
   {
     title: "Mujer con Sombrero - Remix Digital",
     originalTitle: "Mujer con Sombrero",
-    artist: "Mirta Susana Aguilar",
+    artist: "Mirta Aguilar",
     version: "02",
     description: "Interpretación contemporánea de la clásica 'Mujer con Sombrero'. Esta versión digital juega con nuevas texturas y patrones mientras mantiene la elegancia del original.",
     digitalTechnique: "Collage digital y técnicas mixtas",

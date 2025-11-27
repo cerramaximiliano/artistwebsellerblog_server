@@ -24,7 +24,7 @@ const digitalArtSchema = new mongoose.Schema({
   },
   artist: {
     type: String,
-    default: 'Mirta Susana Aguilar'
+    default: 'Mirta Aguilar'
   },
   
   // Información de la versión digital
@@ -270,7 +270,7 @@ const digitalArtExample = {
   title: "Los Reyes - Versión Digital",
   originalArtworkId: "ID_DEL_CUADRO_ORIGINAL",
   originalTitle: "Los Reyes",
-  artist: "Mirta Susana Aguilar",
+  artist: "Mirta Aguilar",
   version: "01",
   description: "Reinterpretación digital de la obra original 'Los Reyes'. Esta versión contemporánea mantiene la esencia y el poder visual del cuadro original, adaptado para un público joven que busca arte accesible y moderno para decorar sus espacios.",
   digitalTechnique: "Reinterpretación digital con técnicas mixtas",

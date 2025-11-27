@@ -18,7 +18,7 @@ const digitalArtSchema = new mongoose.Schema({
   },
   artist: {
     type: String,
-    default: 'Mirta Susana Aguilar'
+    default: 'Mirta Aguilar'
   },
   
   // Información de la versión digital
