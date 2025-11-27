@@ -49,6 +49,10 @@ const siteInfoSchema = new mongoose.Schema({
       externalUrl: {
         type: String,
         required: false
+      },
+      externalUrlCaption: {
+        type: String,
+        required: false
       }
     }],
     exhibitions: [{
@@ -78,7 +82,15 @@ const siteInfoSchema = new mongoose.Schema({
         type: String,
         required: false
       },
+      externalUrlCaption: {
+        type: String,
+        required: false
+      },
       catalogUrl: {
+        type: String,
+        required: false
+      },
+      catalogUrlCaption: {
         type: String,
         required: false
       }
@@ -106,7 +118,15 @@ const siteInfoSchema = new mongoose.Schema({
         type: String,
         required: false
       },
+      externalUrlCaption: {
+        type: String,
+        required: false
+      },
       certificateUrl: {
+        type: String,
+        required: false
+      },
+      certificateUrlCaption: {
         type: String,
         required: false
       }
