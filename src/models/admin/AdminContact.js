@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const adminContactSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ['client', 'supplier'],
+    enum: ['client', 'supplier', 'both'],
     required: [true, 'El tipo de contacto es requerido'],
     index: true
   },
@@ -46,8 +46,8 @@ const adminContactSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['collector', 'gallery', 'museum', 'corporate', 'individual', 'materials', 'framing', 'shipping', 'other'],
-    default: 'individual',
+    enum: ['collector', 'gallery', 'museum', 'corporate', 'individual', 'art_dealer', 'materials', 'services', 'framing', 'printing', 'shipping', 'other'],
+    default: 'other',
     index: true
   },
   tags: [{
