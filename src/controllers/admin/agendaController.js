@@ -1,6 +1,32 @@
 const { AgendaEvent, Task } = require('../../models/admin');
 const { sendSuccess, sendError, sendPaginatedResponse } = require('../../utils/responseHandler');
 
+// Helper para convertir location de objeto a string
+const formatEventLocation = (location) => {
+  if (!location) return '';
+  if (typeof location === 'string') return location;
+
+  if (location.isVirtual && location.virtualLink) {
+    return `Virtual: ${location.virtualLink}`;
+  } else if (location.name) {
+    return location.address
+      ? `${location.name}, ${location.address}`
+      : location.name;
+  } else if (location.address) {
+    return location.address;
+  }
+  return '';
+};
+
+// Helper para formatear evento para el frontend
+const formatEventForFrontend = (event) => {
+  const eventObj = event.toObject ? event.toObject() : event;
+  return {
+    ...eventObj,
+    location: formatEventLocation(eventObj.location)
+  };
+};
+
 // ============ EVENTOS ============
 
 // Obtener eventos con filtros
@@ -46,11 +72,15 @@ const getEvents = async (req, res) => {
         .limit(parseInt(limit))
         .skip(parseInt(offset))
         .populate('relatedContact', 'name')
-        .populate('relatedArtwork', 'title'),
+        .populate('relatedArtwork', 'title')
+        .lean(),
       AgendaEvent.countDocuments(query)
     ]);
 
-    sendPaginatedResponse(res, events, {
+    // Formatear eventos para el frontend
+    const formattedEvents = events.map(formatEventForFrontend);
+
+    sendPaginatedResponse(res, formattedEvents, {
       total,
       limit: parseInt(limit),
       offset: parseInt(offset),
@@ -68,13 +98,14 @@ const getEvent = async (req, res) => {
       .populate('relatedContact', 'name email phone')
       .populate('relatedArtwork', 'title')
       .populate('participants.contact', 'name email')
-      .populate('createdBy', 'name email');
+      .populate('createdBy', 'name email')
+      .lean();
 
     if (!event) {
       return sendError(res, { message: 'Evento no encontrado' }, 404);
     }
 
-    sendSuccess(res, event);
+    sendSuccess(res, formatEventForFrontend(event));
   } catch (error) {
     sendError(res, error, 500);
   }
@@ -89,7 +120,7 @@ const createEvent = async (req, res) => {
     };
 
     const event = await AgendaEvent.create(eventData);
-    sendSuccess(res, event, 'Evento creado exitosamente', 201);
+    sendSuccess(res, formatEventForFrontend(event), 'Evento creado exitosamente', 201);
   } catch (error) {
     sendError(res, error, 400);
   }
@@ -110,7 +141,7 @@ const updateEvent = async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    sendSuccess(res, updatedEvent, 'Evento actualizado exitosamente');
+    sendSuccess(res, formatEventForFrontend(updatedEvent), 'Evento actualizado exitosamente');
   } catch (error) {
     sendError(res, error, 400);
   }
@@ -145,7 +176,7 @@ const updateEventStatus = async (req, res) => {
     event.status = status;
     await event.save();
 
-    sendSuccess(res, event, `Evento marcado como ${status}`);
+    sendSuccess(res, formatEventForFrontend(event), `Evento marcado como ${status}`);
   } catch (error) {
     sendError(res, error, 400);
   }
@@ -159,17 +190,19 @@ const getCalendarMonth = async (req, res) => {
 
     // Formatear para calendario
     const calendarEvents = events.map(event => ({
-      id: event._id,
+      _id: event._id,
       title: event.title,
-      start: event.startDate,
-      end: event.endDate,
+      startDate: event.startDate,
+      endDate: event.endDate,
       allDay: event.allDay,
       type: event.type,
       color: event.color,
-      status: event.status
+      status: event.status,
+      location: formatEventLocation(event.location),
+      description: event.description
     }));
 
-    sendSuccess(res, calendarEvents);
+    sendSuccess(res, { events: calendarEvents });
   } catch (error) {
     sendError(res, error, 500);
   }
@@ -180,7 +213,7 @@ const getUpcomingEvents = async (req, res) => {
   try {
     const { limit = 5 } = req.query;
     const events = await AgendaEvent.findUpcoming(parseInt(limit));
-    sendSuccess(res, events);
+    sendSuccess(res, events.map(formatEventForFrontend));
   } catch (error) {
     sendError(res, error, 500);
   }
@@ -190,7 +223,7 @@ const getUpcomingEvents = async (req, res) => {
 const getTodayEvents = async (req, res) => {
   try {
     const events = await AgendaEvent.findToday();
-    sendSuccess(res, events);
+    sendSuccess(res, events.map(formatEventForFrontend));
   } catch (error) {
     sendError(res, error, 500);
   }
@@ -266,7 +299,8 @@ const getTasks = async (req, res) => {
         .limit(parseInt(limit))
         .skip(parseInt(offset))
         .populate('relatedEvent', 'title startDate')
-        .populate('relatedContact', 'name'),
+        .populate('relatedContact', 'name')
+        .lean(),
       Task.countDocuments(query)
     ]);
 
@@ -289,7 +323,8 @@ const getTask = async (req, res) => {
       .populate('relatedContact', 'name email')
       .populate('relatedArtwork', 'title')
       .populate('createdBy', 'name email')
-      .populate('assignedTo', 'name email');
+      .populate('assignedTo', 'name email')
+      .lean();
 
     if (!task) {
       return sendError(res, { message: 'Tarea no encontrada' }, 404);

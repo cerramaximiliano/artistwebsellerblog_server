@@ -153,7 +153,7 @@ agendaEventSchema.statics.findByMonth = function(year, month) {
       }
     ],
     status: { $ne: 'cancelled' }
-  }).sort({ startDate: 1 });
+  }).sort({ startDate: 1 }).lean();
 };
 
 agendaEventSchema.statics.findUpcoming = function(limit = 5) {
@@ -163,7 +163,8 @@ agendaEventSchema.statics.findUpcoming = function(limit = 5) {
     status: 'scheduled'
   })
     .sort({ startDate: 1 })
-    .limit(limit);
+    .limit(limit)
+    .lean();
 };
 
 agendaEventSchema.statics.findToday = function() {
@@ -182,7 +183,7 @@ agendaEventSchema.statics.findToday = function() {
       }
     ],
     status: 'scheduled'
-  }).sort({ startDate: 1 });
+  }).sort({ startDate: 1 }).lean();
 };
 
 agendaEventSchema.statics.findPendingReminders = function() {

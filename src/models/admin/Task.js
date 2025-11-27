@@ -113,7 +113,7 @@ taskSchema.pre('save', function(next) {
 taskSchema.statics.findPending = function() {
   return this.find({
     status: { $in: ['pending', 'in_progress'] }
-  }).sort({ priority: -1, dueDate: 1 });
+  }).sort({ priority: -1, dueDate: 1 }).lean();
 };
 
 taskSchema.statics.findOverdue = function() {
@@ -121,7 +121,7 @@ taskSchema.statics.findOverdue = function() {
   return this.find({
     status: { $in: ['pending', 'in_progress'] },
     dueDate: { $lt: now }
-  }).sort({ dueDate: 1 });
+  }).sort({ dueDate: 1 }).lean();
 };
 
 taskSchema.statics.findToday = function() {
@@ -134,7 +134,7 @@ taskSchema.statics.findToday = function() {
   return this.find({
     status: { $in: ['pending', 'in_progress'] },
     dueDate: { $gte: startOfDay, $lte: endOfDay }
-  }).sort({ priority: -1 });
+  }).sort({ priority: -1 }).lean();
 };
 
 taskSchema.statics.findThisWeek = function() {
@@ -150,7 +150,7 @@ taskSchema.statics.findThisWeek = function() {
   return this.find({
     status: { $in: ['pending', 'in_progress'] },
     dueDate: { $gte: startOfWeek, $lte: endOfWeek }
-  }).sort({ dueDate: 1, priority: -1 });
+  }).sort({ dueDate: 1, priority: -1 }).lean();
 };
 
 taskSchema.statics.getStats = async function() {
