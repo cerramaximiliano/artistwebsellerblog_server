@@ -117,6 +117,13 @@ const artworkSchema = new mongoose.Schema({
     }
   },
 
+  // Ubicación física de la obra
+  location: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+
   // Información adicional
   tags: [String],
   featured: {
