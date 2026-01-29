@@ -167,6 +167,61 @@ artworkSchema.index({ category: 1, 'status.isAvailable': 1 });
 artworkSchema.index({ 'pricing.finalPrice': 1 });
 
 // Métodos estáticos
+
+// Genera el siguiente código secuencial disponible (AA001, AA002, ..., ZZ999)
+artworkSchema.statics.generateUniqueCode = async function() {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  // Convertir código a índice numérico
+  const codeToIndex = (code) => {
+    const letter1Index = letters.indexOf(code[0]);
+    const letter2Index = letters.indexOf(code[1]);
+    const number = parseInt(code.slice(2), 10);
+    return (letter1Index * 26 * 1000) + (letter2Index * 1000) + number;
+  };
+
+  // Convertir índice a código
+  const indexToCode = (index) => {
+    const letter1Index = Math.floor(index / (26 * 1000));
+    const letter2Index = Math.floor((index % (26 * 1000)) / 1000);
+    const number = index % 1000;
+
+    if (letter1Index >= 26) {
+      throw new Error('Se agotaron los códigos disponibles (máximo ZZ999)');
+    }
+
+    return `${letters[letter1Index]}${letters[letter2Index]}${String(number).padStart(3, '0')}`;
+  };
+
+  // Buscar el código más alto existente
+  const lastArtwork = await this.findOne({ code: { $exists: true, $ne: null } })
+    .sort({ code: -1 })
+    .select('code')
+    .lean();
+
+  let nextIndex = 1; // Empezar desde AA001
+
+  if (lastArtwork?.code && /^[A-Z]{2}\d{3}$/.test(lastArtwork.code)) {
+    nextIndex = codeToIndex(lastArtwork.code) + 1;
+  }
+
+  // Generar el siguiente código
+  const newCode = indexToCode(nextIndex);
+
+  // Verificar que no exista (por si hay huecos)
+  const exists = await this.findOne({ code: newCode });
+  if (exists) {
+    // Si existe, buscar el siguiente disponible
+    let index = nextIndex + 1;
+    while (await this.findOne({ code: indexToCode(index) })) {
+      index++;
+    }
+    return indexToCode(index);
+  }
+
+  return newCode;
+};
+
 artworkSchema.statics.findAvailable = function() {
   return this.find({
     'status.isAvailable': true,

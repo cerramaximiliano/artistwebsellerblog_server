@@ -93,12 +93,15 @@ const createArtwork = async (req, res) => {
   try {
     // Validate Cloudinary configuration if image is being uploaded
     if (req.file && !process.env.CLOUDINARY_CLOUD_NAME) {
-      return sendError(res, { 
-        message: 'Cloudinary no está configurado correctamente. Verifica las variables de entorno.' 
+      return sendError(res, {
+        message: 'Cloudinary no está configurado correctamente. Verifica las variables de entorno.'
       }, 500);
     }
-    
+
     const artworkData = { ...req.body };
+
+    // Generar código único secuencial automáticamente
+    artworkData.code = await Artwork.generateUniqueCode();
     
     // If an image was uploaded via multer
     if (req.file) {
