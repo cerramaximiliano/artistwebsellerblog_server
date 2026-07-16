@@ -41,6 +41,9 @@ const getArtworks = async (req, res) => {
       case 'oldest':
         sortOption = { createdAt: 1 };
         break;
+      case 'code':
+        sortOption = { code: 1 };
+        break;
       case 'newest':
       default:
         sortOption = { createdAt: -1 };
